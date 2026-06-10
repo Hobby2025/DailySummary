@@ -1,8 +1,15 @@
 "use client";
 
 import { useState } from "react";
+import { Check, ClipboardCopy, TriangleAlert } from "lucide-react";
 
-export function CopyMarkdownButton({ markdown }: { markdown: string }) {
+export function CopyMarkdownButton({
+  markdown,
+  disabled = false,
+}: {
+  markdown: string;
+  disabled?: boolean;
+}) {
   const [copied, setCopied] = useState(false);
   const [failed, setFailed] = useState(false);
 
@@ -20,7 +27,14 @@ export function CopyMarkdownButton({ markdown }: { markdown: string }) {
   }
 
   return (
-    <button className="button primary" type="button" onClick={handleCopy}>
+    <button className="button primary" disabled={disabled || !markdown} type="button" onClick={handleCopy}>
+      {failed ? (
+        <TriangleAlert className="icon" aria-hidden="true" />
+      ) : copied ? (
+        <Check className="icon" aria-hidden="true" />
+      ) : (
+        <ClipboardCopy className="icon" aria-hidden="true" />
+      )}
       {failed ? "복사 실패" : copied ? "복사 완료" : "Markdown 복사"}
     </button>
   );

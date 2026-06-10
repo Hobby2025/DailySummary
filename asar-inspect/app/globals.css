@@ -1,3 +1,65 @@
+/p>
+          <h1>일일보고 생성</h1>
+        </div>
+        <nav className="nav">
+          <Link href="/reports/new">
+            <PenLine className="icon" aria-hidden="true" />
+            업무 입력
+          </Link>
+          <Link href="/weekly">
+            <Workflow className="icon" aria-hidden="true" />
+            주간보고
+          </Link>
+          <Link href="/">
+            <Home className="icon" aria-hidden="true" />
+            처음으로
+          </Link>
+        </nav>
+      </header>
+
+      <form className="panel section" onSubmit={handleSubmit}>
+        <div className="grid">
+          <div className="field">
+            <label htmlFor="targetDate">
+              <CalendarDays className="icon" aria-hidden="true" />
+              대상일
+            </label>
+            <input
+              id="targetDate"
+              name="targetDate"
+              type="date"
+              value={targetDate}
+              onChange={(event) => setTargetDate(event.target.value)}
+            />
+          </div>
+          <div className="actions">
+            <button className="button primary" disabled={isGenerating} type="submit">
+              {isGenerating ? (
+                <>
+                  <Loader2 className="icon spin" aria-hidden="true" />
+                  생성 중
+                </>
+              ) : (
+                <>
+                  <Send className="icon" aria-hidden="true" />
+                  일일보고 생성
+                </>
+              )}
+            </button>
+            <CopyMarkdownButton markdown={markdown} disabled={!markdown} />
+          </div>
+        </div>
+        {message ? <p className="form-message">{message}</p> : null}
+      </form>
+
+      {markdown ? (
+        <section className="panel">
+          <pre className="markdown-preview">{markdown}</pre>
+        </section>
+      ) : null}
+    </main>
+  );
+}
 :root {
   color: #172033;
   background: #eef3f8;
@@ -110,8 +172,18 @@ button {
   font-weight: 800;
 }
 
+.nav {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+.nav a,
 .button,
-.bottom-dock a {
+.entry-link,
+.entry-secondary {
   min-height: 34px;
   display: inline-flex;
   align-items: center;
@@ -128,8 +200,11 @@ button {
   cursor: pointer;
 }
 
+.nav a:hover,
 .button:hover:not(:disabled),
-.bottom-dock a:hover {
+.entry-link:hover,
+.entry-secondary:hover,
+.workflow-card:hover {
   border-color: #91a8b8;
   background: #f7fbfc;
 }
@@ -203,44 +278,6 @@ button {
   border-radius: 8px;
   background: rgba(255, 255, 255, 0.96);
   padding: 8px 10px;
-}
-
-.bottom-dock {
-  min-height: 58px;
-  display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
-  gap: 7px;
-  flex: 0 0 auto;
-  border: 1px solid var(--line);
-  border-radius: 8px;
-  background: rgba(255, 255, 255, 0.96);
-  padding: 7px;
-  box-shadow: 0 10px 30px rgba(20, 33, 52, 0.08);
-}
-
-.bottom-dock a {
-  min-width: 0;
-  min-height: 42px;
-  flex-direction: column;
-  gap: 4px;
-  border-color: transparent;
-  background: transparent;
-  padding: 6px 4px;
-  color: var(--muted);
-  font-size: 11px;
-}
-
-.bottom-dock a.active {
-  border-color: var(--primary);
-  background: var(--primary-soft);
-  color: var(--primary-strong);
-}
-
-.bottom-dock a span {
-  max-width: 100%;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
 }
 
 .page > .user-bar {
@@ -386,94 +423,50 @@ button {
   line-height: 1.58;
 }
 
-.settings-panel {
-  min-height: 68px;
+.workflow-grid {
+  min-height: 0;
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 10px;
+  flex: 0 0 auto;
+}
+
+.workflow-card {
   display: flex;
   align-items: center;
-  justify-content: space-between;
   gap: 12px;
-  flex: 0 0 auto;
+  min-height: 88px;
   border: 1px solid var(--line);
   border-radius: 8px;
   background: rgba(255, 255, 255, 0.96);
-  padding: 12px 13px;
+  padding: 13px;
+  color: var(--text);
+  text-decoration: none;
   box-shadow: 0 10px 30px rgba(20, 33, 52, 0.06);
 }
 
-.settings-panel div {
-  min-width: 0;
+.workflow-card strong {
+  display: block;
+  margin-bottom: 5px;
+  font-size: 15px;
 }
 
-.settings-panel strong {
-  display: inline-flex;
-  align-items: center;
-  gap: 7px;
-  margin-bottom: 4px;
-  color: var(--text);
-  font-size: 13px;
-}
-
-.settings-panel small {
+.workflow-card small {
   display: block;
   color: var(--muted);
   font-size: 12px;
-  line-height: 1.4;
+  line-height: 1.45;
 }
 
-.toggle-switch {
-  position: relative;
-  width: 48px;
-  height: 28px;
-  flex: 0 0 48px;
-}
-
-.toggle-switch input {
-  position: absolute;
-  inset: 0;
-  margin: 0;
-  opacity: 0;
-  cursor: pointer;
-}
-
-.toggle-switch span {
-  position: absolute;
-  inset: 0;
-  border: 1px solid var(--line-strong);
-  border-radius: 999px;
-  background: #dbe4ec;
-  transition:
-    background 160ms ease,
-    border-color 160ms ease;
-}
-
-.toggle-switch span::before {
-  content: "";
-  position: absolute;
-  top: 3px;
-  left: 3px;
-  width: 20px;
-  height: 20px;
-  border-radius: 50%;
-  background: #ffffff;
-  box-shadow: 0 2px 6px rgba(20, 33, 52, 0.22);
-  transition: transform 160ms ease;
-}
-
-.toggle-switch input:checked + span {
-  border-color: var(--primary);
-  background: var(--primary);
-}
-
-.toggle-switch input:checked + span::before {
-  transform: translateX(20px);
-}
-
-.toggle-switch input:disabled {
-  cursor: not-allowed;
-}
-
-.toggle-switch input:disabled + span {
-  opacity: 0.62;
+.workflow-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 8px;
+  background: var(--primary-soft);
+  color: var(--primary);
 }
 
 .compact-panel {
@@ -503,9 +496,8 @@ button {
 .entry-shell {
   width: 100%;
   height: 100vh;
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
+  display: grid;
+  place-items: stretch;
   overflow: hidden;
   padding: 12px;
   background:
@@ -515,7 +507,7 @@ button {
 
 .entry-card {
   width: 100%;
-  flex: 1 1 auto;
+  height: 100%;
   min-height: 0;
   display: flex;
   flex-direction: column;
@@ -589,150 +581,4 @@ button {
   line-height: 1.48;
 }
 
-.textarea-wrap textarea::placeholder,
-.entry-field input::placeholder {
-  color: var(--subtle);
-}
-
-.text-count {
-  position: absolute;
-  right: 10px;
-  bottom: 8px;
-  color: var(--subtle);
-  font-size: 11px;
-  font-weight: 800;
-}
-
-.entry-note {
-  flex: 0 0 auto;
-  margin: 0;
-  border: 1px solid #dbe7ee;
-  border-radius: 7px;
-  background: #f7fbfc;
-  padding: 8px 10px;
-  color: var(--muted);
-  font-size: 12px;
-  line-height: 1.4;
-}
-
-.entry-grid {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 10px;
-  flex: 0 0 auto;
-}
-
-.entry-field {
-  min-width: 0;
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-}
-
-.entry-field input[readonly] {
-  background: #f7fbfc;
-  color: var(--muted);
-}
-
-.entry-actions {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  flex: 0 0 auto;
-  border-top: 1px solid var(--line);
-  padding-top: 10px;
-}
-
-.entry-actions .button {
-  min-width: 96px;
-  padding: 9px 14px;
-}
-
-body:has(.page) {
-  background: var(--bg);
-}
-
-.page > .panel:not(.compact-panel):not(.section) {
-  flex: 1 1 auto;
-  overflow: hidden;
-}
-
-@keyframes slideUpPanel {
-  from {
-    opacity: 0;
-    transform: translateX(18px);
-  }
-
-  to {
-    opacity: 1;
-    transform: translateX(0);
-  }
-}
-
-@keyframes spin {
-  to {
-    transform: rotate(360deg);
-  }
-}
-
-@media (max-width: 520px) {
-  .page {
-    padding: 10px;
-    gap: 10px;
-  }
-
-  .header {
-    align-items: stretch;
-    flex-direction: column;
-    padding: 11px;
-  }
-
-  .header h1 {
-    font-size: 18px;
-  }
-
-  .grid {
-    grid-template-columns: 1fr;
-    gap: 8px;
-  }
-
-  .user-bar {
-    min-height: 44px;
-  }
-
-  .settings-panel {
-    min-height: 64px;
-    padding: 10px 11px;
-  }
-
-  .entry-shell {
-    padding: 10px;
-  }
-
-  .entry-card {
-    gap: 9px;
-    padding: 10px;
-  }
-
-  .entry-header h1 {
-    font-size: 20px;
-  }
-
-  .entry-grid {
-    grid-template-columns: 1fr;
-    gap: 8px;
-  }
-
-  .entry-actions {
-    justify-content: space-between;
-  }
-
-  .bottom-dock {
-    gap: 5px;
-    padding: 6px;
-  }
-
-  .bottom-dock a {
-    font-size: 10px;
-  }
-}
+.textarea-wrap textarea::p

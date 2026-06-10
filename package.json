@@ -1,31 +1,67 @@
 {
-  "name": "daily-summary",
+  "name": "daily-summary-desktop",
   "version": "0.1.0",
   "private": true,
   "type": "module",
+  "main": "electron/main.cjs",
   "scripts": {
     "dev": "next dev",
+    "desktop:dev": "node scripts/desktop-dev.cjs",
+    "desktop:start": "npm run build && electron electron/main.cjs",
+    "desktop:package": "node scripts/generate-icon.cjs && npm run build && electron-builder --win portable",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint",
-    "test": "node --test --experimental-strip-types tests/*.test.ts",
-    "prisma:generate": "prisma generate",
-    "prisma:migrate": "prisma migrate dev"
+    "lint": "eslint .",
+    "test": "node --test --experimental-strip-types tests/*.test.ts"
   },
   "dependencies": {
-    "@prisma/client": "^5.22.0",
-    "next": "^14.2.18",
-    "react": "^18.3.1",
-    "react-dom": "^18.3.1",
-    "zod": "^3.23.8"
+    "lucide-react": "^1.17.0",
+    "next": "^16.2.9",
+    "react": "^19.2.7",
+    "react-dom": "^19.2.7"
   },
   "devDependencies": {
     "@types/node": "^20.17.6",
-    "@types/react": "^18.3.12",
-    "@types/react-dom": "^18.3.1",
-    "eslint": "^8.57.1",
-    "eslint-config-next": "^14.2.18",
-    "prisma": "^5.22.0",
+    "@types/react": "^19.2.17",
+    "@types/react-dom": "^19.2.3",
+    "electron": "^42.4.0",
+    "electron-builder": "^26.15.2",
+    "eslint": "^9.39.4",
+    "eslint-config-next": "^16.2.9",
     "typescript": "^5.6.3"
+  },
+  "build": {
+    "appId": "com.yusco.daily-summary",
+    "productName": "업무보고 자동화",
+    "directories": {
+      "output": "release"
+    },
+    "files": [
+      ".next/**/*",
+      "!.next/cache/**/*",
+      "!.next/dev/**/*",
+      "app/**/*",
+      "build/**/*",
+      "components/**/*",
+      "electron/**/*",
+      "lib/**/*",
+      "scripts/**/*",
+      "node_modules/**/*",
+      "next.config.mjs",
+      "package.json"
+    ],
+    "extraResources": [
+      {
+        "from": "build",
+        "to": "build"
+      }
+    ],
+    "win": {
+      "icon": "build/icon.ico",
+      "target": "portable"
+    }
+  },
+  "overrides": {
+    "postcss": "8.5.10"
   }
 }

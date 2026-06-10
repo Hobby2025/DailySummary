@@ -1,3 +1,73 @@
+ull;
+  }
+
+  return window.dailySummaryDesktop ?? null;
+}
+
+function toFetchResponse(response: DesktopApiResponse) {
+  const headers = new Headers(response.headers);
+  const body = response.bodyBase64 ? base64ToUint8Array(response.bodyBase64) : null;
+
+  return new Response(body, {
+    status: response.status,
+    headers,
+  });
+}
+
+async function responseJson<T>(response: Response) {
+  return (await response.json()) as T;
+}
+
+function normalizeHeaders(headers: HeadersInit | undefined) {
+  if (!headers) return undefined;
+  return Object.fromEntries(new Headers(headers).entries());
+}
+
+function base64ToUint8Array(value: string) {
+  const binary = atob(value);
+  const bytes = new Uint8Array(binary.length);
+  for (let index = 0; index < binary.length; index += 1) {
+    bytes[index] = binary.charCodeAt(index);
+  }
+  return bytes;
+}
+
+function getErrorMessage(data: unknown, fallback: string) {
+  if (!data || typeof data !== "object") {
+    return fallback;
+  }
+
+  const errorData = data as { message?: unknown; error?: unknown };
+  if (typeof errorData.message === "string") {
+    return errorData.message;
+  }
+  if (typeof errorData.error === "string") {
+    return errorData.error;
+  }
+
+  return fallback;
+}
+
+async function fetchWithCredentials(path: string, options: RequestInit) {
+  try {
+    return await fetch(buildBackendUrl(path), {
+      ...options,
+      credentials: "include",
+      headers: {
+        "Content-Type": "application/json",
+        ...options.headers,
+      },
+    });
+  } catch {
+    throw new Error("YUSCON_WEB 백엔드에 연결할 수 없습니다. 백엔드 서버 실행 상태와 API 주소를 확인해 주세요.");
+  }
+}
+export const BACKEND_API_BASE_URL =
+  process.env.NEXT_PUBLIC_BACKEND_API_BASE_URL ?? "http://127.0.0.1:4000";
+
+export function buildBackendUrl(path: string) {
+  return `${BACKEND_API_BASE_URL}${path.startsWith("/") ? path : `/${path}`}`;
+}
 export const PLAN_TYPES = ["CURRENT_WEEK", "NEXT_WEEK"] as const;
 
 export type PlanType = (typeof PLAN_TYPES)[number];
@@ -144,71 +214,4 @@ export function buildDailyMarkdownReport(targetDate: string, rows: UserReportBlo
 
 export function buildWeeklyFallbackRows(rows: WeeklyUserReportBlock[]) {
   return rows.map((row) => ({
-    userName: row.userName,
-    lastWeekText: formatNumberedList(row.lastWeekItems),
-    thisWeekText: formatNumberedList(row.thisWeekItems),
-  }));
-}
-
-export function formatNumberedList(items: string[]) {
-  if (items.length === 0) {
-    return "";
-  }
-
-  return items.map((item, index) => `${index + 1}. ${item}`).join("\n");
-}
-
-export function formatShortDateRange(start: string, end: string) {
-  const [, startMonth, startDay] = start.split("-");
-  const [, endMonth, endDay] = end.split("-");
-
-  return `${Number(startMonth)}/${Number(startDay)} ~ ${Number(endMonth)}/${Number(endDay)}`;
-}
-
-export function addDays(value: string, amount: number) {
-  assertDateString(value);
-  const date = new Date(`${value}T00:00:00.000Z`);
-  date.setUTCDate(date.getUTCDate() + amount);
-
-  return date.toISOString().slice(0, 10);
-}
-
-function formatSeoulDate(date: Date) {
-  const parts = new Intl.DateTimeFormat("en-CA", {
-    timeZone: "Asia/Seoul",
-    year: "numeric",
-    month: "2-digit",
-    day: "2-digit",
-  }).formatToParts(date);
-
-  const values = Object.fromEntries(parts.map((part) => [part.type, part.value]));
-
-  return `${values.year}-${values.month}-${values.day}`;
-}
-
-function getDayOfWeek(value: string) {
-  assertDateString(value);
-
-  const [year, month, day] = value.split("-").map(Number);
-
-  return new Date(Date.UTC(year, month - 1, day)).getUTCDay();
-}
-
-function isRealDateString(value: string) {
-  const [year, month, day] = value.split("-").map(Number);
-  const date = new Date(Date.UTC(year, month - 1, day));
-
-  return date.toISOString().slice(0, 10) === value;
-}
-
-function isPlanType(value: string): value is PlanType {
-  return PLAN_TYPES.includes(value as PlanType);
-}
-
-function formatWorkItem(item: WorkItemForReport) {
-  return item.projectName === "미분류" ? item.content : `${item.projectName}: ${item.content}`;
-}
-
-function escapeMarkdown(value: string) {
-  return value.replace(/\|/g, "\\|");
-}
+    userName: row.userNa

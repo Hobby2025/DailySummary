@@ -1,9 +1,69 @@
+등"}
+              />
+              <span className="text-count">
+                {nextWeek.length} / {MAX_TEXT_LENGTH}
+              </span>
+            </div>
+          </section>
+        ) : (
+          <p className="entry-note">금요일에는 차주 계획 입력란도 함께 표시합니다.</p>
+        )}
+
+        <div className="entry-grid">
+          <div className="entry-field">
+            <label htmlFor="reportDate">
+              <CalendarDays className="icon" aria-hidden="true" />
+              날짜
+            </label>
+            <input
+              id="reportDate"
+              name="reportDate"
+              required
+              type="date"
+              value={reportDate}
+              onChange={(event) => setReportDate(event.target.value)}
+            />
+          </div>
+          <div className="entry-field">
+            <label htmlFor="userName">
+              <UserRound className="icon" aria-hidden="true" />
+              작성자
+            </label>
+            <input id="userName" name="userName" readOnly required maxLength={50} value={userName} />
+          </div>
+        </div>
+
+        {message ? <p className={hasError ? "entry-message error" : "entry-message"}>{message}</p> : null}
+
+        <footer className="entry-actions">
+          <button className="button primary" disabled={isSaving} type="submit">
+            {isSaving ? (
+              <>
+                <Loader2 className="icon spin" aria-hidden="true" />
+                저장 중
+              </>
+            ) : (
+              <>
+                <Save className="icon" aria-hidden="true" />
+                저장
+              </>
+            )}
+          </button>
+          <Link className="entry-secondary" href="/">
+            <CheckCircle2 className="icon" aria-hidden="true" />
+            나중에
+          </Link>
+        </footer>
+      </form>
+    </main>
+  );
+}
 "use client";
 
 import { FormEvent, useState } from "react";
-import { CalendarDays, Download, Loader2, Workflow } from "lucide-react";
+import Link from "next/link";
+import { CalendarDays, Download, FileText, Home, Loader2, PenLine, Workflow } from "lucide-react";
 import { AuthGate, UserBar } from "@/components/AuthGate";
-import { BottomDock } from "@/components/BottomDock";
 import { apiRequest } from "@/lib/authClient";
 import { addDays, getCurrentMondaySeoulDate } from "@/lib/reporting";
 
@@ -71,51 +131,4 @@ function WeeklyContent({
             관리자 화면
           </p>
           <h1>주간보고 DOCX 생성</h1>
-        </div>
-      </header>
-
-      <form className="panel section" onSubmit={handleSubmit}>
-        <div className="grid">
-          <div className="field">
-            <label htmlFor="baseMonday">
-              <CalendarDays className="icon" aria-hidden="true" />
-              이번 주 월요일
-            </label>
-            <input
-              id="baseMonday"
-              name="baseMonday"
-              type="date"
-              value={baseMonday}
-              onChange={(event) => setBaseMonday(event.target.value)}
-            />
-          </div>
-          <div className="field">
-            <label>생성 범위</label>
-            <p className="summary-text">
-              지난주 업무: {lastWeekStart} ~ {lastWeekEnd}
-              <br />
-              이번 주 계획: {baseMonday} ~ {thisWeekEnd}
-            </p>
-          </div>
-        </div>
-        {message ? <p className="form-message">{message}</p> : null}
-        <div className="actions">
-          <button className="button primary" disabled={isGenerating} type="submit">
-            {isGenerating ? (
-              <>
-                <Loader2 className="icon spin" aria-hidden="true" />
-                생성 중
-              </>
-            ) : (
-              <>
-                <Download className="icon" aria-hidden="true" />
-                DOCX 다운로드
-              </>
-            )}
-          </button>
-        </div>
-      </form>
-      <BottomDock />
-    </main>
-  );
-}
+       
