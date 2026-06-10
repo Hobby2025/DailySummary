@@ -27,6 +27,7 @@ async function prepareStandalone() {
     path.join(standalonePath, "node_modules", "next", "dist", "compiled"),
   );
   await copyIfExists(path.join(projectRoot, "public"), path.join(standalonePath, "public"));
+  await copyIfExists(path.join(projectRoot, "templates"), path.join(standalonePath, "templates"));
 }
 
 prepareStandalone().catch((error) => {
