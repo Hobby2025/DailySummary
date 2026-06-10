@@ -120,7 +120,7 @@ function ModelHealthContent({
       </section>
 
       {health ? (
-        <section className="panel">
+        <section className="panel health-panel">
           <div className="health-summary">
             <strong>
               {isHealthy ? (

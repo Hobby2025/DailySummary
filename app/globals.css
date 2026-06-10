@@ -471,6 +471,13 @@ button {
   font-weight: 700;
 }
 
+.health-panel {
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow: auto;
+  padding: 0;
+}
+
 .toggle-switch {
   position: relative;
   width: 48px;
@@ -570,6 +577,7 @@ button {
   display: flex;
   flex-direction: column;
   gap: 8px;
+  overflow-y: auto;
   border: 1px solid var(--line);
   border-radius: 8px;
   background: rgba(255, 255, 255, 0.96);
@@ -705,6 +713,10 @@ body:has(.page) {
 .page > .panel:not(.compact-panel):not(.section) {
   flex: 1 1 auto;
   overflow: hidden;
+}
+
+.page > .health-panel {
+  overflow: auto;
 }
 
 @keyframes slideUpPanel {

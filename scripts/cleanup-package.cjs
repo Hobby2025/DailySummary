@@ -11,11 +11,26 @@ async function cleanupPackageOutput() {
     throw new Error("패키징 결과 실행 파일을 찾을 수 없습니다.");
   }
 
-  await Promise.all(
-    entries
-      .filter((entry) => !(entry.isFile() && entry.name.endsWith(".exe")))
-      .map((entry) => fs.rm(path.join(outputPath, entry.name), { recursive: true, force: true })),
-  );
+  const cleanupTargets = entries.filter((entry) => !(entry.isFile() && entry.name.endsWith(".exe")));
+
+  for (const entry of cleanupTargets) {
+    const targetPath = path.join(outputPath, entry.name);
+
+    try {
+      await fs.rm(targetPath, { recursive: true, force: true });
+    } catch (error) {
+      if (isBusyError(error)) {
+        console.warn(`패키지 결과 파일은 생성됐지만 잠긴 임시 폴더를 정리하지 못했습니다: ${targetPath}`);
+        continue;
+      }
+
+      throw error;
+    }
+  }
+}
+
+function isBusyError(error) {
+  return error && typeof error === "object" && ["EBUSY", "EPERM"].includes(error.code);
 }
 
 cleanupPackageOutput().catch((error) => {
