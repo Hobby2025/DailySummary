@@ -8,7 +8,7 @@
     "dev": "next dev",
     "desktop:dev": "node scripts/desktop-dev.cjs",
     "desktop:start": "npm run build && electron electron/main.cjs",
-    "desktop:package": "node scripts/generate-icon.cjs && npm run build && electron-builder --win portable",
+    "desktop:package": "node scripts/generate-icon.cjs && npm run build && node scripts/prepare-standalone.cjs && electron-builder --win portable && node scripts/cleanup-package.cjs",
     "build": "next build",
     "start": "next start",
     "lint": "eslint .",
@@ -37,16 +37,17 @@
       "output": "release-portable"
     },
     "files": [
-      ".next/**/*",
+      ".next/standalone/**/*",
       "!.next/cache/**/*",
       "!.next/dev/**/*",
+      ".next/static/**/*",
+      "!node_modules/**/*",
       "app/**/*",
       "build/**/*",
       "components/**/*",
       "electron/**/*",
       "lib/**/*",
       "scripts/**/*",
-      "node_modules/**/*",
       "next.config.mjs",
       "package.json"
     ],
@@ -58,6 +59,7 @@
     ],
     "win": {
       "icon": "build/icon.ico",
+      "signExecutable": false,
       "target": "portable"
     }
   },

@@ -233,7 +233,7 @@ async function ensureNextServer() {
     return;
   }
 
-  const next = require("next");
+  const next = require(path.join(getAppRootPath(), "node_modules", "next"));
   const nextApp = next({
     dev: false,
     dir: getAppRootPath(),
@@ -656,7 +656,7 @@ function getAppIconPath() {
 
 function getAppRootPath() {
   if (IS_PACKAGED) {
-    return app.getAppPath();
+    return path.join(app.getAppPath(), ".next", "standalone");
   }
 
   return process.cwd();
