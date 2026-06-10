@@ -23,8 +23,8 @@ async function prepareStandalone() {
     path.join(standalonePath, ".next", "static"),
   );
   await copyIfExists(
-    path.join(projectRoot, "node_modules", "next", "dist", "compiled", "webpack"),
-    path.join(standalonePath, "node_modules", "next", "dist", "compiled", "webpack"),
+    path.join(projectRoot, "node_modules", "next", "dist", "compiled"),
+    path.join(standalonePath, "node_modules", "next", "dist", "compiled"),
   );
   await copyIfExists(path.join(projectRoot, "public"), path.join(standalonePath, "public"));
 }
