@@ -620,7 +620,7 @@ button {
 .entry-section {
   min-height: 0;
   display: flex;
-  flex: 1 1 0;
+  flex: 0 0 auto;
   flex-direction: column;
   gap: 7px;
   margin-bottom: 0;
@@ -636,12 +636,12 @@ button {
 .textarea-wrap {
   min-height: 0;
   position: relative;
-  flex: 1 1 0;
+  flex: 0 0 auto;
 }
 
 .textarea-wrap textarea {
-  height: 100%;
-  min-height: 140px;
+  height: clamp(128px, 23vh, 180px);
+  min-height: 128px;
   resize: none;
   padding: 10px 11px 28px;
   line-height: 1.48;
@@ -778,6 +778,11 @@ body:has(.page) {
 
   .entry-header h1 {
     font-size: 20px;
+  }
+
+  .textarea-wrap textarea {
+    height: clamp(116px, 19vh, 146px);
+    min-height: 116px;
   }
 
   .entry-grid {
