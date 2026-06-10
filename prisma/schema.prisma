@@ -1,0 +1,65 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id           String        @id @default(cuid())
+  name         String
+  email        String?       @unique
+  dailyReports DailyReport[]
+  workItems    WorkItem[]
+  createdAt    DateTime      @default(now())
+  updatedAt    DateTime      @updatedAt
+}
+
+model DailyReport {
+  id              String     @id @default(cuid())
+  userId          String
+  reportDate      DateTime
+  rawCurrentWeek  String
+  rawNextWeek     String?
+  user            User       @relation(fields: [userId], references: [id])
+  workItems       WorkItem[]
+  createdAt       DateTime   @default(now())
+  updatedAt       DateTime   @updatedAt
+
+  @@index([userId, reportDate])
+}
+
+model WorkItem {
+  id            String       @id @default(cuid())
+  userId        String
+  dailyReportId String
+  workDate      DateTime
+  projectName   String
+  content       String
+  workType      String?
+  status        String       @default("UNKNOWN")
+  planType      String
+  rawText       String
+  user          User         @relation(fields: [userId], references: [id])
+  dailyReport   DailyReport  @relation(fields: [dailyReportId], references: [id])
+  createdAt     DateTime     @default(now())
+  updatedAt     DateTime     @updatedAt
+
+  @@index([userId, workDate])
+  @@index([projectName])
+  @@index([planType])
+}
+
+model WeeklyReport {
+  id        String   @id @default(cuid())
+  weekStart DateTime
+  weekEnd   DateTime
+  title     String
+  markdown  String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([weekStart, weekEnd])
+}
