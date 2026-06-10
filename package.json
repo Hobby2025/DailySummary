@@ -34,7 +34,7 @@
     "appId": "com.yusco.daily-summary",
     "productName": "업무보고 자동화",
     "directories": {
-      "output": "release"
+      "output": "release-portable"
     },
     "files": [
       ".next/**/*",

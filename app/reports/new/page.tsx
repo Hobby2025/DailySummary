@@ -8,7 +8,7 @@ import {
   Save,
   UserRound,
 } from "lucide-react";
-import { AuthGate, UserBar } from "@/components/AuthGate";
+import { AuthGate } from "@/components/AuthGate";
 import { BottomDock } from "@/components/BottomDock";
 import { apiRequest } from "@/lib/authClient";
 import { getTodaySeoulDate, isFridayDate } from "@/lib/reporting";
@@ -18,21 +18,15 @@ const MAX_TEXT_LENGTH = 5000;
 export default function NewReportPage() {
   return (
     <AuthGate>
-      {(user, onLogout) => (
-        <NewReportForm userName={user.name} onLogout={onLogout} user={user} />
-      )}
+      {(user) => <NewReportForm userName={user.name} />}
     </AuthGate>
   );
 }
 
 function NewReportForm({
-  user,
   userName,
-  onLogout,
 }: {
-  user: Parameters<typeof UserBar>[0]["user"];
   userName: string;
-  onLogout: () => Promise<void>;
 }) {
   const [message, setMessage] = useState("");
   const [isSaving, setIsSaving] = useState(false);
@@ -90,7 +84,6 @@ function NewReportForm({
 
   return (
     <main className="entry-shell">
-      <UserBar user={user} onLogout={onLogout} />
       <form className="entry-card slide-up-panel" onSubmit={handleSubmit}>
         <header className="entry-header">
           <div>

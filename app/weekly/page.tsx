@@ -2,7 +2,7 @@
 
 import { FormEvent, useState } from "react";
 import { CalendarDays, Download, Loader2, Workflow } from "lucide-react";
-import { AuthGate, UserBar } from "@/components/AuthGate";
+import { AuthGate } from "@/components/AuthGate";
 import { BottomDock } from "@/components/BottomDock";
 import { apiRequest } from "@/lib/authClient";
 import { addDays, getCurrentMondaySeoulDate } from "@/lib/reporting";
@@ -10,18 +10,12 @@ import { addDays, getCurrentMondaySeoulDate } from "@/lib/reporting";
 export default function WeeklyPage() {
   return (
     <AuthGate>
-      {(user, onLogout) => <WeeklyContent user={user} onLogout={onLogout} />}
+      {() => <WeeklyContent />}
     </AuthGate>
   );
 }
 
-function WeeklyContent({
-  user,
-  onLogout,
-}: {
-  user: Parameters<typeof UserBar>[0]["user"];
-  onLogout: () => Promise<void>;
-}) {
+function WeeklyContent() {
   const [baseMonday, setBaseMonday] = useState(() => getCurrentMondaySeoulDate());
   const [message, setMessage] = useState("");
   const [isGenerating, setIsGenerating] = useState(false);
@@ -63,7 +57,6 @@ function WeeklyContent({
 
   return (
     <main className="page">
-      <UserBar user={user} onLogout={onLogout} />
       <header className="header">
         <div>
           <p className="eyebrow">

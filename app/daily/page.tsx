@@ -2,7 +2,7 @@
 
 import { FormEvent, useState } from "react";
 import { CalendarDays, FileText, Loader2, Send } from "lucide-react";
-import { AuthGate, UserBar } from "@/components/AuthGate";
+import { AuthGate } from "@/components/AuthGate";
 import { BottomDock } from "@/components/BottomDock";
 import { CopyMarkdownButton } from "@/components/CopyMarkdownButton";
 import { apiRequest } from "@/lib/authClient";
@@ -11,18 +11,12 @@ import { getYesterdaySeoulDate } from "@/lib/reporting";
 export default function DailyReportPage() {
   return (
     <AuthGate>
-      {(user, onLogout) => <DailyReportContent user={user} onLogout={onLogout} />}
+      {() => <DailyReportContent />}
     </AuthGate>
   );
 }
 
-function DailyReportContent({
-  user,
-  onLogout,
-}: {
-  user: Parameters<typeof UserBar>[0]["user"];
-  onLogout: () => Promise<void>;
-}) {
+function DailyReportContent() {
   const [targetDate, setTargetDate] = useState(() => getYesterdaySeoulDate());
   const [markdown, setMarkdown] = useState("");
   const [message, setMessage] = useState("");
@@ -58,7 +52,6 @@ function DailyReportContent({
 
   return (
     <main className="page">
-      <UserBar user={user} onLogout={onLogout} />
       <header className="header">
         <div>
           <p className="eyebrow">

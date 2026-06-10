@@ -19,6 +19,7 @@
   --success: #157347;
   --danger: #b42318;
   --shadow: 0 18px 48px rgba(20, 33, 52, 0.12);
+  --dock-height: 72px;
 }
 
 * {
@@ -73,7 +74,7 @@ button {
   flex-direction: column;
   gap: 12px;
   overflow: hidden;
-  padding: 14px;
+  padding: 14px 14px calc(14px + var(--dock-height));
   background:
     linear-gradient(180deg, rgba(255, 255, 255, 0.88), rgba(238, 243, 248, 0.94)),
     var(--bg);
@@ -210,7 +211,11 @@ button {
   display: grid;
   grid-template-columns: repeat(4, minmax(0, 1fr));
   gap: 7px;
-  flex: 0 0 auto;
+  position: fixed;
+  right: 14px;
+  bottom: 12px;
+  left: 14px;
+  z-index: 20;
   border: 1px solid var(--line);
   border-radius: 8px;
   background: rgba(255, 255, 255, 0.96);
@@ -505,9 +510,8 @@ button {
   height: 100vh;
   display: flex;
   flex-direction: column;
-  gap: 10px;
   overflow: hidden;
-  padding: 12px;
+  padding: 10px 12px calc(10px + var(--dock-height));
   background:
     linear-gradient(180deg, rgba(248, 250, 252, 0.96), rgba(234, 241, 247, 0.98)),
     var(--bg);
@@ -519,12 +523,12 @@ button {
   min-height: 0;
   display: flex;
   flex-direction: column;
-  gap: 11px;
+  gap: 8px;
   border: 1px solid var(--line);
   border-radius: 8px;
   background: rgba(255, 255, 255, 0.96);
   box-shadow: var(--shadow);
-  padding: 12px;
+  padding: 10px;
 }
 
 .slide-up-panel {
@@ -538,7 +542,7 @@ button {
   gap: 10px;
   flex: 0 0 auto;
   border-bottom: 1px solid var(--line);
-  padding-bottom: 10px;
+  padding-bottom: 8px;
 }
 
 .entry-header h1 {
@@ -583,7 +587,7 @@ button {
 
 .textarea-wrap textarea {
   height: 100%;
-  min-height: 92px;
+  min-height: 140px;
   resize: none;
   padding: 10px 11px 28px;
   line-height: 1.48;
@@ -618,7 +622,7 @@ button {
 .entry-grid {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 10px;
+  gap: 8px;
   flex: 0 0 auto;
 }
 
@@ -640,7 +644,7 @@ button {
   gap: 10px;
   flex: 0 0 auto;
   border-top: 1px solid var(--line);
-  padding-top: 10px;
+  padding-top: 8px;
 }
 
 .entry-actions .button {
@@ -677,7 +681,7 @@ body:has(.page) {
 
 @media (max-width: 520px) {
   .page {
-    padding: 10px;
+    padding: 10px 10px calc(10px + var(--dock-height));
     gap: 10px;
   }
 
@@ -706,7 +710,7 @@ body:has(.page) {
   }
 
   .entry-shell {
-    padding: 10px;
+    padding: 8px 10px calc(8px + var(--dock-height));
   }
 
   .entry-card {
@@ -728,6 +732,9 @@ body:has(.page) {
   }
 
   .bottom-dock {
+    right: 10px;
+    bottom: 8px;
+    left: 10px;
     gap: 5px;
     padding: 6px;
   }
