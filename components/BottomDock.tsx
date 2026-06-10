@@ -2,7 +2,9 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { FileText, Home, PenLine, Workflow } from "lucide-react";
+import { useEffect, useState } from "react";
+import { Activity, FileText, Home, PenLine, Workflow } from "lucide-react";
+import { getCurrentUser } from "@/lib/authClient";
 
 const dockItems = [
   {
@@ -27,12 +29,43 @@ const dockItems = [
   },
 ];
 
+const superAdminDockItems = [
+  {
+    href: "/model-health",
+    label: "Ping",
+    icon: Activity,
+  },
+];
+
 export function BottomDock() {
   const pathname = usePathname();
+  const [isSuperAdmin, setIsSuperAdmin] = useState(false);
+
+  useEffect(() => {
+    let mounted = true;
+
+    getCurrentUser()
+      .then((user) => {
+        if (mounted) {
+          setIsSuperAdmin(user?.role === "SUPERADMIN");
+        }
+      })
+      .catch(() => {
+        if (mounted) {
+          setIsSuperAdmin(false);
+        }
+      });
+
+    return () => {
+      mounted = false;
+    };
+  }, []);
+
+  const visibleItems = isSuperAdmin ? [...dockItems, ...superAdminDockItems] : dockItems;
 
   return (
     <nav className="bottom-dock" aria-label="주요 화면 이동">
-      {dockItems.map((item) => {
+      {visibleItems.map((item) => {
         const Icon = item.icon;
         const isActive = pathname === item.href;
 

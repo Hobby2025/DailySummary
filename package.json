@@ -1,6 +1,8 @@
 {
   "name": "daily-summary-desktop",
-  "version": "0.1.0",
+  "version": "0.0.1",
+  "description": "YUSCON 업무보고 자동화 데스크톱 앱",
+  "author": "stjoo0925",
   "private": true,
   "type": "module",
   "main": "electron/main.cjs",
