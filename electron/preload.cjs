@@ -14,4 +14,7 @@ contextBridge.exposeInMainWorld("dailySummaryDesktop", {
     setStartup: (openAtLogin) =>
       ipcRenderer.invoke("desktop-settings:setStartup", { openAtLogin }),
   },
+  notifications: {
+    show: (payload) => ipcRenderer.invoke("desktop-notifications:show", payload),
+  },
 });

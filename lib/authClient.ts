@@ -44,6 +44,9 @@ type DesktopBridge = {
     getStartup: () => Promise<DesktopApiResponse>;
     setStartup: (openAtLogin: boolean) => Promise<DesktopApiResponse>;
   };
+  notifications?: {
+    show: (payload: { title: string; body: string; path?: string }) => Promise<DesktopApiResponse>;
+  };
 };
 
 declare global {
@@ -162,6 +165,20 @@ export async function setStartupSetting(openAtLogin: boolean) {
   }
 
   return data.openAtLogin;
+}
+
+export async function showDesktopNotification(payload: { title: string; body: string; path?: string }) {
+  const desktop = getDesktopBridge();
+  if (!desktop?.notifications) {
+    return null;
+  }
+
+  const response = await desktop.notifications.show(payload);
+  if (!response.ok) {
+    throw new Error("데스크톱 알림을 표시하지 못했습니다.");
+  }
+
+  return true;
 }
 
 async function desktopApiRequest(path: string, options: RequestInit) {

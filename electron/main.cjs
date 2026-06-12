@@ -360,6 +360,42 @@ function registerIpcHandlers() {
     };
   });
 
+  ipcMain.handle("desktop-notifications:show", async (_event, payload) => {
+    if (!Notification.isSupported()) {
+      return {
+        ok: false,
+        status: 400,
+        data: { message: "이 PC에서 알림을 지원하지 않습니다." },
+      };
+    }
+
+    const title = typeof payload?.title === "string" && payload.title.trim()
+      ? payload.title.trim().slice(0, 80)
+      : APP_NAME;
+    const body = typeof payload?.body === "string" ? payload.body.trim().slice(0, 200) : "";
+    const path = typeof payload?.path === "string" && payload.path.startsWith("/")
+      ? payload.path
+      : null;
+
+    const notification = new Notification({
+      title,
+      body,
+      icon: getAppIconPath(),
+    });
+
+    if (path) {
+      notification.on("click", () => showPopupWindow(`${APP_URL}${path}`));
+    }
+
+    notification.show();
+
+    return {
+      ok: true,
+      status: 200,
+      data: { shown: true },
+    };
+  });
+
   ipcMain.handle("desktop-auth:login", async (_event, payload) => {
     if (!safeStorage.isEncryptionAvailable()) {
       return {

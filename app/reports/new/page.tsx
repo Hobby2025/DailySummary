@@ -10,7 +10,8 @@ import {
 } from "lucide-react";
 import { AuthGate } from "@/components/AuthGate";
 import { BottomDock } from "@/components/BottomDock";
-import { apiRequest } from "@/lib/authClient";
+import { apiRequest, showDesktopNotification } from "@/lib/authClient";
+import { getPendingProjectAliasCount } from "@/lib/projectAliases";
 import { getTodaySeoulDate, isFridayDate } from "@/lib/reporting";
 
 const MAX_TEXT_LENGTH = 5000;
@@ -57,11 +58,24 @@ function NewReportForm({
       });
 
       if (response.ok) {
+        const pendingAliasCount = await getPendingProjectAliasCount().catch(() => 0);
         form.reset();
         setCurrentWeek("");
         setNextWeek("");
         setReportDate(getTodaySeoulDate());
-        setMessage("업무 내역을 저장했습니다.");
+        setMessage(
+          pendingAliasCount > 0
+            ? `업무 내역을 저장했습니다. 프로젝트 별칭 승인 대기 ${pendingAliasCount}건을 확인해 주세요.`
+            : "업무 내역을 저장했습니다.",
+        );
+        if (pendingAliasCount > 0) {
+          window.dispatchEvent(new Event("project-aliases:changed"));
+          await showDesktopNotification({
+            title: "프로젝트 별칭 승인 대기",
+            body: `승인 대기 중인 프로젝트 별칭이 ${pendingAliasCount}건 있습니다.`,
+            path: "/project-aliases",
+          }).catch(() => null);
+        }
         return;
       }
 
